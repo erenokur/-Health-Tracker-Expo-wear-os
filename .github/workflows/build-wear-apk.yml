@@ -1,0 +1,57 @@
+name: Build and Release Wear OS APK
+
+on:
+  push:
+    branches: ["release"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Auto-increment version
+        run: |
+          VERSION="1.0.${{ github.run_number }}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          # Basic version increment for build.gradle.kts
+          sed -i "s/versionCode = 1/versionCode = ${{ github.run_number }}/g" app/build.gradle.kts
+          sed -i "s/versionName = \"1.0\"/versionName = \"$VERSION\"/g" app/build.gradle.kts
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wear-release-${{ env.VERSION }}
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: wear-v${{ env.VERSION }}
+          name: Wear OS Release v${{ env.VERSION }}
+          files: app/build/outputs/apk/release/app-release-unsigned.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
