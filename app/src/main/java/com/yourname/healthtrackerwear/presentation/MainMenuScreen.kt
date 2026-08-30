@@ -41,6 +41,7 @@ fun HealthTrackerWearApp() {
                     MainMenuScreen(
                         onBpClick = { navController.navigate("bp") },
                         onMedClick = { navController.navigate("med") },
+                        onAboutClick = { navController.navigate("about") },
                     )
                 }
                 composable("bp") {
@@ -49,15 +50,21 @@ fun HealthTrackerWearApp() {
                 composable("med") {
                     MedScreen(onSaved = { navController.popBackStack() })
                 }
+                composable("about") {
+                    AboutScreen()
+                }
             }
         }
     }
 }
 
 @Composable
-fun MainMenuScreen(onBpClick: () -> Unit, onMedClick: () -> Unit) {
+fun MainMenuScreen(
+    onBpClick: () -> Unit,
+    onMedClick: () -> Unit,
+    onAboutClick: () -> Unit,
+) {
     val lang = LocalLanguage.current
-    val toggleLanguage = LocalOnToggleLanguage.current
 
     ScalingLazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -86,11 +93,10 @@ fun MainMenuScreen(onBpClick: () -> Unit, onMedClick: () -> Unit) {
         }
         item {
             Chip(
-                label = { Text(Strings.get("languageToggle", lang)) },
-                onClick = { toggleLanguage() },
+                label = { Text(Strings.get("about", lang)) },
+                onClick = onAboutClick,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 3.dp),
             )
         }
     }
 }
-

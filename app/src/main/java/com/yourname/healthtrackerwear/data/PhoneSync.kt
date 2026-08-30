@@ -34,4 +34,24 @@ object PhoneSync {
         val nodeClient = Wearable.getNodeClient(context)
         return nodeClient.connectedNodes.await().isNotEmpty()
     }
+
+    /**
+     * Asks the paired phone to re-push the current medication list.
+     * The phone's WearMessageListenerService handles "/med-list-request" and
+     * responds by calling DataClient.putDataItem("/med-list", ...).
+     *
+     * Call this when MedScreen opens so the watch always starts with a fresh
+     * list even after a cold start or a long disconnection period.
+     * Silently no-ops if no phone is connected.
+     */
+    suspend fun requestMedicineList(context: Context) {
+        val nodeClient = Wearable.getNodeClient(context)
+        val nodes = nodeClient.connectedNodes.await()
+        val messageClient = Wearable.getMessageClient(context)
+        for (node in nodes) {
+            try {
+                messageClient.sendMessage(node.id, "/med-list-request", ByteArray(0)).await()
+            } catch (_: Exception) { /* phone might not be connected — fine */ }
+        }
+    }
 }

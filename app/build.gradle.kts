@@ -9,7 +9,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.yourname.healthtrackerwear"
+        applicationId = "com.yourname.healthtracker"
         minSdk = 30
         targetSdk = 36
         versionCode = 1

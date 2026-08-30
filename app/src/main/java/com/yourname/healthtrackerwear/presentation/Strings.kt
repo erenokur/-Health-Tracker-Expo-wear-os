@@ -17,7 +17,19 @@ object Strings {
         "full" to "Tok",
         "saveAsTaken" to "İÇİLDİ OLARAK KAYDET",
         "medNameLabel" to "İlaç adı",
+        "otherMed" to "Diğer (Ses/Yaz)",
         "languageToggle" to "TR",
+        "about" to "Hakkında",
+        "aboutTitle" to "Sağlık Monitörü",
+        "version" to "Versiyon",
+        "phoneConnected" to "📶 Telefon bağlı",
+        "phoneDisconnected" to "✗ Telefon bağlı değil",
+        "checkingConnection" to "Bağlantı kontrol ediliyor...",
+        "refresh" to "Yenile",
+        "language" to "Dil",
+        "medListEmpty" to "İlaç listesi yok",
+        "medListHint" to "Telefon uygulamasında ilaç ekleyin",
+        "refreshList" to "Listemi Güncelle",
     )
 
     private val en = mapOf(
@@ -36,7 +48,19 @@ object Strings {
         "full" to "Full Stomach",
         "saveAsTaken" to "SAVE AS TAKEN",
         "medNameLabel" to "Medication name",
+        "otherMed" to "Other (Voice/Type)",
         "languageToggle" to "EN",
+        "about" to "About",
+        "aboutTitle" to "Health Monitor",
+        "version" to "Version",
+        "phoneConnected" to "📶 Phone connected",
+        "phoneDisconnected" to "✗ Phone not connected",
+        "checkingConnection" to "Checking connection...",
+        "refresh" to "Refresh",
+        "language" to "Language",
+        "medListEmpty" to "No medication list",
+        "medListHint" to "Add medications in the phone app",
+        "refreshList" to "Refresh My List",
     )
 
     fun get(key: String, lang: String): String {
