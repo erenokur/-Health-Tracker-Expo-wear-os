@@ -26,12 +26,6 @@ object PhoneSync {
                 android.os.Handler(android.os.Looper.getMainLooper()).post {
                     android.widget.Toast.makeText(context, "HATA: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
                 }
-                // Swallow per-node failures (e.g. phone briefly out of Bluetooth
-                // range) — the caller shows its own success/failure UI based on
-                // whether at least one node was reachable, see callers below.
-            }
-        }
-    }
 
     suspend fun hasConnectedPhone(context: Context): Boolean {
         val nodeClient = Wearable.getNodeClient(context)
