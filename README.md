@@ -1,87 +1,55 @@
-# Health Tracker — Wear OS Companion App
+# Health Tracker (Wear OS Companion App)
 
-Standalone Kotlin + Jetpack Compose (Wear Compose) app. Installed directly
-to your watch via `adb install` — it is **not** bundled inside the phone
-app's APK, so it doesn't need to share a package name or signing
-certificate with it. It only needs Google Play Services (Wearable) present
-on the watch, which is standard on any real Wear OS 3+ device including
-Wear OS 6.
+A standalone Kotlin and Jetpack Compose (Wear Compose) application for Wear OS smartwatches. It serves as a companion to the main Health Tracker mobile app, allowing you to log blood pressure and medications directly from your wrist.
 
-## What it does
+## Features
 
-- **Tansiyon Ekle**: 3 fields (Büyük/Sys, Küçük/Dia, Nabız) + KAYDET button.
-  Saves with the current time and sends it to the paired phone.
-- **İlaç İçildi**: tap to speak/type a medication name (opens the system
-  voice/keyboard input — there's no synced medication list on the watch yet,
-  see "Known limitation" below), toggle Aç/Tok, KAYDET button.
+- **Blood Pressure Logging**: Quickly input your systolic, diastolic, and pulse readings using standard Wear OS rotary controls/number pads.
+- **Medication Logging**: Select from your active medication list (synced from the phone) and mark them as taken (Fasting / Fed).
+- **Instant Sync**: Uses the Wearable Data Layer API to instantly transmit your logs to the paired phone for persistent storage.
 
-Both screens send a JSON message to every currently-connected phone via the
-**Wearable Data Layer API** (`MessageClient`), on paths `/bp-log` and
-`/med-log`. If no phone is currently connected (Bluetooth out of range,
-phone off), the screen shows "Hata — Tekrar Dene" rather than silently
-losing the entry — nothing is queued/retried automatically in this version.
+## Getting Started
 
-## Known limitation (by design, for v1)
+### Prerequisites
 
-The medication screen doesn't know your actual medication list — it's
-free-text (voice or keyboard) rather than a picker. Teaching the watch your
-active medication list would mean building phone→watch sync too (via
-`DataClient`, pushed whenever your medication list changes) — worth doing
-as a v2 once this baseline round-trip is confirmed working.
+- Java (JDK 17)
+- Android SDK (with Wear OS emulator or a physical watch)
+- Google Play Services (Wearable) present on the watch (Standard on Wear OS 3+).
 
-## Build & install (no Android Studio required)
+### Build Instructions
 
-This project has no committed Gradle wrapper JAR (binary files can't be
-generated in a text-only environment) — generate it once using a system
-Gradle install:
+You do not need Android Studio to build the APK. You can build it directly via the included Gradle wrapper.
 
-```bash
-# If you don't have `gradle` on PATH yet:
-sdkmanager --install "cmdline-tools;latest"   # you likely already have this
-sudo apt install gradle                       # or use sdkman: sdk install gradle
+1. Ensure the wrapper is executable:
+   ```bash
+   chmod +x ./gradlew
+   ```
+2. Build a Debug APK:
+   ```bash
+   ./gradlew assembleDebug
+   ```
+3. Build a Release APK:
+   ```bash
+   ./gradlew assembleRelease
+   ```
 
-cd wear-app
-gradle wrapper --gradle-version 8.9
-```
+### Installing on a Physical Watch
 
-That generates `gradlew`, `gradlew.bat`, and `gradle/wrapper/gradle-wrapper.jar`.
-From then on, use `./gradlew` for everything:
+Since most watches don't have USB ports, you'll need to use Wireless ADB Debugging:
 
-```bash
-# Make sure your WATCH (not phone) is connected and in developer mode with
-# ADB debugging enabled (Settings > Developer options > ADB debugging on
-# the watch itself, or "Debug over Bluetooth" if using wireless ADB via the
-# paired phone's Wear OS app).
-adb devices    # confirm the watch shows up
+1. Enable **Developer Options** on your watch (Settings -> About -> Tap Software Version 7 times).
+2. Go to Developer Options and enable **ADB Debugging** and **Wireless Debugging**.
+3. Note the IP address and port displayed under Wireless Debugging (e.g., `192.168.1.100:5555`).
+4. Connect to the watch from your terminal:
+   ```bash
+   adb connect <watch-ip>:<port>
+   ```
+5. Install the built APK:
+   ```bash
+   adb install -r app/build/outputs/apk/release/app-release-unsigned.apk
+   ```
 
-./gradlew installDebug
-```
+## Continuous Integration (CI/CD)
 
-If `adb devices` only shows your phone, not the watch: on the watch, enable
-Developer options (Settings → About → tap Software version ~7 times), then
-Settings → Developer options → turn on "ADB debugging" and "Debug over
-Bluetooth". Wireless debugging to a watch usually goes through
-`adb connect <watch-ip>:5555` once you enable Wi-Fi debugging on the watch,
-since most watches don't have a USB port.
-
-## Package name
-
-Currently `com.yourname.healthtrackerwear` (matching the placeholder in the
-phone app's `com.yourname.healthtracker`) — change both
-`app/build.gradle.kts` (`namespace`, `applicationId`) and
-`AndroidManifest.xml` if you want something real before a wider release;
-doesn't matter for personal use.
-
-## Language support (TR/EN)
-
-`presentation/Strings.kt` holds a TR/EN dictionary; the currently selected
-language lives in `MainMenuScreen.kt` (a `remember { mutableStateOf(...) }`
-provided to every screen via `CompositionLocalProvider`) and persists across
-launches via `data/LanguagePrefs.kt` (plain `SharedPreferences`, no need for
-anything heavier on a 3-screen watch app). A "TR"/"EN" chip on the main menu
-toggles it.
-
-Note: the medication screen always sends `mealType` to the phone as `"Aç"`
-or `"Tok"` regardless of the watch's display language — that's the exact
-string the phone app's database and UI expect, so the *display* label is
-translated but the *wire value* isn't.
+The repository includes a GitHub Actions workflow (`.github/workflows/build-wear-apk.yml`). 
+Whenever code is pushed to the `release` branch, it automatically builds a Release APK and attaches it to a new GitHub Release.
