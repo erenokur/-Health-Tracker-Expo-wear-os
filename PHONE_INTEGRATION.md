@@ -14,7 +14,7 @@ Expo projesinde `android/app/src/main/java/<paket-adınız>/` altına aşağıda
 ### `HealthWearListenerService.kt`
 
 ```kotlin
-package com.yourname.healthtracker   // kendi paket adınızla değiştirin
+package com.erenokur.healthtracker   // kendi paket adınızla değiştirin
 
 import android.content.Intent
 import android.util.Log
@@ -31,8 +31,8 @@ class HealthWearListenerService : WearableListenerService() {
 
     companion object {
         const val TAG = "HealthWearListener"
-        const val ACTION_BP_LOG  = "com.yourname.healthtracker.BP_LOG"
-        const val ACTION_MED_LOG = "com.yourname.healthtracker.MED_LOG"
+        const val ACTION_BP_LOG  = "com.erenokur.healthtracker.BP_LOG"
+        const val ACTION_MED_LOG = "com.erenokur.healthtracker.MED_LOG"
     }
 
     override fun onMessageReceived(event: MessageEvent) {
@@ -108,7 +108,7 @@ class HealthWearListenerService : WearableListenerService() {
 ### `WearSyncModule.kt`
 
 ```kotlin
-package com.yourname.healthtracker
+package com.erenokur.healthtracker
 
 import com.facebook.react.bridge.*
 import com.google.android.gms.wearable.PutDataMapRequest
@@ -173,7 +173,7 @@ async function pushMedListToWatch(medicines) {
 ### `WearEventModule.kt`
 
 ```kotlin
-package com.yourname.healthtracker
+package com.erenokur.healthtracker
 
 import android.content.BroadcastReceiver
 import android.content.Context

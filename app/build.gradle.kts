@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.yourname.healthtrackerwear"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.yourname.healthtracker"
+        applicationId = "com.erenokur.healthtracker"
         minSdk = 30
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
@@ -28,9 +28,23 @@ android {
         jvmTarget = "17"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
