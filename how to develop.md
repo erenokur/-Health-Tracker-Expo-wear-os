@@ -74,3 +74,54 @@ cd wear-app
 
 `./gradlew` komutu yoksa, önce Gradle wrapper'ı oluşturman gerekiyor —
 ana `README.md` dosyasındaki "Build & install" bölümüne bak.
+
+## Emülatör ile Çalışma ve Fiziksel Telefonu Eşleştirme
+
+Wear OS emülatörü (sanal saat) kullanıyorsanız ve bu emülatörü fiziksel bir test telefonuyla haberleştirmek (eşleştirmek) istiyorsanız şu adımları izleyin:
+
+### Emülatörü Başlatma
+Android Studio'da Device Manager üzerinden başlatabileceğiniz gibi terminalden de başlatabilirsiniz:
+1. Emülatör isimlerini listelemek için:
+   ```bash
+   emulator -list-avds
+   ```
+2. Emülatörü başlatmak için (komut bulunamazsa `~/Android/Sdk/emulator/emulator` yolunu deneyin):
+   ```bash
+   emulator -avd [EMÜLATÖR_ADI]
+   ```
+
+### Fiziksel Telefon ile Emülatörü Eşleştirme
+Telefonunuzdaki ana uygulamadan saate veri gönderebilmek için iki cihazı birbirine bağlamanız gerekir.
+
+**Yöntem 1: Android Studio ile (Önerilen)**
+1. Telefonu bilgisayara USB ile bağlayın ve USB Hata Ayıklama'yı açın.
+2. Android Studio'da **Device Manager**'ı açın.
+3. Çalışan saat emülatörünüzün yanındaki **üç noktaya (⋮)** tıklayıp **"Pair Wearable"** (Giyilebilir Cihazı Eşleştir) seçeneğini seçin.
+4. Açılan pencerede bağlı olan **fiziksel telefonunuzu** seçin.
+5. Telefonunuzdaki Wear OS uygulamasından onaylayarak işlemi bitirin.
+
+**Yöntem 2: Terminal ile (Manuel)**
+Android Studio kullanmıyorsanız ADB ile bir port köprüsü (forward) kurabilirsiniz:
+1. Telefon bilgisayara bağlıyken:
+   ```bash
+   adb -d forward tcp:5601 tcp:5601
+   ```
+2. Telefonunuza **"Wear OS by Google"** uygulamasını kurun.
+3. Uygulamayı açıp yeni saat araması yapın, listede çıkan **"Emulator"** cihazını seçin ve eşleşin.
+
+### Emülatöre Uygulamayı Kurmak ve Açmak
+
+Birden fazla cihaz bağlıyken uygulamayı sadece emülatöre kurmak için:
+```bash
+ANDROID_SERIAL=emulator-5554 ./gradlew installDebug
+```
+
+Emülatörün saat menüsüyle uğraşmadan uygulamayı doğrudan terminalden başlatmak için:
+```bash
+adb -s emulator-5554 shell am start -n com.yourname.healthtracker/com.yourname.healthtrackerwear.MainActivity
+```
+
+Emülatörden (veya herhangi bir cihazdan) uygulamayı tek komutla silmek (kaldırmak) için:
+```bash
+adb -s emulator-5554 uninstall com.yourname.healthtracker
+```
